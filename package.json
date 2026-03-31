@@ -1,7 +1,11 @@
 {
-  "name": "nextn",
+  "name": "keja-hub",
   "version": "0.1.0",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Edward1260/Keja-hub.git"
+  },
   "scripts": {
     "dev": "next dev -p 4000",
     "genkit:dev": "genkit start --port 2000 -- tsx src/ai/dev.ts",
