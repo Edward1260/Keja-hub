@@ -1,0 +1,130 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 45 100% 98%;
+    --foreground: 210 40% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 40% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 40% 10%;
+    --primary: 25 95% 50%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 45 30% 90%;
+    --secondary-foreground: 45 95% 20%;
+    --muted: 45 10% 90%;
+    --muted-foreground: 45 10% 40%;
+    --accent: 35 100% 50%;
+    --accent-foreground: 35 100% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 45 20% 85%;
+    --input: 45 20% 85%;
+    --ring: 25 95% 50%;
+    --radius: 2rem;
+  }
+  .dark {
+    --background: 210 40% 5%;
+    --foreground: 210 15% 95%;
+    --card: 210 40% 10%;
+    --card-foreground: 210 15% 95%;
+    --popover: 210 40% 10%;
+    --popover-foreground: 210 15% 95%;
+    --primary: 25 95% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 30% 15%;
+    --secondary-foreground: 210 70% 80%;
+    --muted: 210 30% 15%;
+    --muted-foreground: 210 15% 70%;
+    --accent: 35 80% 60%;
+    --accent-foreground: 35 80% 95%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 210 30% 20%;
+    --input: 210 30% 20%;
+    --ring: 25 95% 60%;
+  }
+}
+
+@layer components {
+  .rough-wall {
+    background-color: #f59e0b;
+    background-image: 
+      linear-gradient(rgba(245, 158, 11, 0.3), rgba(217, 119, 6, 0.5)),
+      url("https://www.transparenttextures.com/patterns/natural-paper.png"),
+      radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+    background-blend-mode: overlay, normal, screen;
+    position: relative;
+  }
+  .rough-wall::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("https://www.transparenttextures.com/patterns/stardust.png");
+    opacity: 0.2;
+    pointer-events: none;
+  }
+  .glass {
+    @apply bg-white/20 backdrop-blur-3xl border border-white/30 shadow-[0_8px_32px_0_rgba(0,0,0,0.1)];
+  }
+  .glass-card {
+    @apply bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl transition-all duration-500;
+  }
+  .premium-gradient {
+    @apply bg-gradient-to-br from-amber-500 via-orange-600 to-rose-600;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased overflow-x-hidden selection:bg-primary/20;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline tracking-tighter leading-tight;
+  }
+}
+
+.mask-fade-left {
+  mask-image: linear-gradient(to right, transparent, black 40%);
+}
+
+.mask-fade-bottom {
+  mask-image: linear-gradient(to bottom, black 60%, transparent);
+}
+
+.mask-neural {
+  mask-image: radial-gradient(circle at 100% 0%, black 30%, transparent 90%);
+}
+
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+.animate-float {
+  animation: float 8s ease-in-out infinite;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/20 rounded-full hover:bg-primary/40 transition-colors;
+}

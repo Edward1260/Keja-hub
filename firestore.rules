@@ -1,0 +1,139 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // --- Core Helper Functions ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // A robust check for administrator status.
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admin_roles/admins/$(request.auth.uid)) ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'GUEST') == 'Admin')
+      );
+    }
+
+    // A check for support role status.
+    function isSupport() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('role', 'GUEST') == 'Support'
+      );
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // --- Collection Rules ---
+
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isAdmin();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId) || isAdmin();
+      allow delete: if isAdmin();
+
+      match /wishlist/{wishId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    match /notifications/{notifId} {
+      // Authenticated users can list/get their own notifications.
+      // Admins can see everything.
+      allow list: if isSignedIn() && (isAdmin() || request.query.limit <= 100);
+      allow get: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (isAdmin() || resource.data.userId == request.auth.uid);
+      allow delete: if isAdmin();
+    }
+
+    match /properties/{propertyId} {
+      allow get, list: if true;
+      allow create: if isSignedIn() && (
+        request.resource.data.get('landlordId', '') == request.auth.uid || 
+        request.resource.data.get('agentId', '') == request.auth.uid || 
+        isAdmin()
+      );
+      allow update: if isSignedIn() && (
+        resource.data.get('landlordId', '') == request.auth.uid || 
+        resource.data.get('agentId', '') == request.auth.uid || 
+        isAdmin()
+      );
+      allow delete: if isAdmin() || (isSignedIn() && resource.data.get('landlordId', '') == request.auth.uid);
+
+      match /units/{unitId} {
+        allow get, list: if true;
+        allow write: if isSignedIn() && (
+          get(/databases/$(database)/documents/properties/$(propertyId)).data.landlordId == request.auth.uid || 
+          get(/databases/$(database)/documents/properties/$(propertyId)).data.agentId == request.auth.uid || 
+          isAdmin()
+        );
+      }
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isSignedIn() && (
+        isAdmin() ||
+        resource.data.get('tenantId', '') == request.auth.uid || 
+        resource.data.get('landlordId', '') == request.auth.uid || 
+        resource.data.get('agentId', '') == request.auth.uid
+      );
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        isAdmin() ||
+        resource.data.get('tenantId', '') == request.auth.uid || 
+        resource.data.get('landlordId', '') == request.auth.uid || 
+        resource.data.get('agentId', '') == request.auth.uid
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /maintenanceRequests/{requestId} {
+      allow read: if isSignedIn() && (
+        isAdmin() ||
+        isSupport() ||
+        resource.data.get('tenantId', '') == request.auth.uid || 
+        resource.data.get('landlordId', '') == request.auth.uid
+      );
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        isAdmin() ||
+        isSupport() ||
+        resource.data.get('tenantId', '') == request.auth.uid || 
+        resource.data.get('landlordId', '') == request.auth.uid
+      );
+      allow delete: if isAdmin();
+    }
+
+    match /invitations/{invitationId} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin() || (isSignedIn() && resource.data.isUsed == false);
+      allow delete: if isAdmin();
+    }
+
+    match /admin_roles/admins/{userId} {
+      allow get: if isSignedIn();
+      allow list, write: if false;
+    }
+    
+    match /chatSessions/{sessionId} {
+      allow read, write: if isSignedIn() && (
+        sessionId.split('_')[0] == request.auth.uid || 
+        sessionId.split('_')[1] == request.auth.uid || 
+        isAdmin()
+      );
+      
+      match /messages/{messageId} {
+        allow read, write: if isSignedIn();
+      }
+    }
+  }
+}

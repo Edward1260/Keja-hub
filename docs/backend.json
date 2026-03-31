@@ -1,0 +1,943 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the NairobiPad platform, including students, landlords, agents, and administrators.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The user's email address, used for login and communication.",
+          "format": "email"
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The user's phone number, potentially used for M-Pesa or WhatsApp communication."
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The user's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The user's last name."
+        },
+        "role": {
+          "type": "string",
+          "description": "The role of the user within the platform (e.g., student, landlord, agent, admin)."
+        },
+        "profileImageUrl": {
+          "type": "string",
+          "description": "URL to the user's profile picture.",
+          "format": "uri"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the user account was last updated.",
+          "format": "date-time"
+        },
+        "isActive": {
+          "type": "boolean",
+          "description": "Indicates if the user account is currently active."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "role",
+        "createdAt",
+        "isActive"
+      ]
+    },
+    "StudentProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "StudentProfile",
+      "type": "object",
+      "description": "Contains specific profile information for student users.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the StudentProfile entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the associated User. (Relationship: User 1:1 StudentProfile)"
+        },
+        "institution": {
+          "type": "string",
+          "description": "The educational institution the student attends (e.g., University of Nairobi)."
+        },
+        "preferredLocation": {
+          "type": "string",
+          "description": "The student's preferred neighborhood or area for accommodation."
+        },
+        "minPrice": {
+          "type": "number",
+          "description": "The minimum preferred monthly rent price for accommodation."
+        },
+        "maxPrice": {
+          "type": "number",
+          "description": "The maximum preferred monthly rent price for accommodation."
+        },
+        "roommatePreferences": {
+          "type": "string",
+          "description": "Description of the student's preferences for a roommate, if applicable."
+        },
+        "isLookingForRoommate": {
+          "type": "boolean",
+          "description": "Indicates if the student is actively looking for a roommate."
+        },
+        "bio": {
+          "type": "string",
+          "description": "A short biography or introduction from the student."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "institution",
+        "isLookingForRoommate"
+      ]
+    },
+    "LandlordProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "LandlordProfile",
+      "type": "object",
+      "description": "Contains specific profile information for landlord users.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the LandlordProfile entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the associated User. (Relationship: User 1:1 LandlordProfile)"
+        },
+        "companyName": {
+          "type": "string",
+          "description": "The name of the landlord's company or business, if applicable."
+        },
+        "address": {
+          "type": "string",
+          "description": "The physical address of the landlord or their business."
+        },
+        "mPesaNumber": {
+          "type": "string",
+          "description": "The M-Pesa number used by the landlord for receiving payments."
+        },
+        "isVerified": {
+          "type": "boolean",
+          "description": "Indicates if the landlord's profile has been verified by an administrator."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "isVerified"
+      ]
+    },
+    "AgentProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AgentProfile",
+      "type": "object",
+      "description": "Contains specific profile information for agent users.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AgentProfile entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to the associated User. (Relationship: User 1:1 AgentProfile)"
+        },
+        "agencyName": {
+          "type": "string",
+          "description": "The name of the agent's real estate agency, if applicable."
+        },
+        "commissionRate": {
+          "type": "number",
+          "description": "The commission rate the agent earns for successful bookings."
+        },
+        "assignedPropertyIds": {
+          "type": "array",
+          "description": "An array of Property IDs that are assigned to this agent for management. (Relationship: Agent N:N Property)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "isVerified": {
+          "type": "boolean",
+          "description": "Indicates if the agent's profile has been verified by an administrator."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "commissionRate",
+        "isVerified"
+      ]
+    },
+    "Property": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Property",
+      "type": "object",
+      "description": "Represents an accommodation listing available on the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Property entity."
+        },
+        "landlordId": {
+          "type": "string",
+          "description": "Reference to the Landlord who owns or manages this property. (Relationship: Landlord 1:N Property)"
+        },
+        "agentId": {
+          "type": "string",
+          "description": "Reference to the Agent assigned to manage this property, if any. (Relationship: Agent 1:N Property)"
+        },
+        "title": {
+          "type": "string",
+          "description": "The title or name of the property listing."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of the property."
+        },
+        "address": {
+          "type": "string",
+          "description": "The street address of the property."
+        },
+        "city": {
+          "type": "string",
+          "description": "The city where the property is located (e.g., Nairobi)."
+        },
+        "neighborhood": {
+          "type": "string",
+          "description": "The specific neighborhood or area of the property."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The geographical latitude coordinate of the property."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The geographical longitude coordinate of the property."
+        },
+        "pricePerMonth": {
+          "type": "number",
+          "description": "The monthly rental price of the property."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency for the rental price (e.g., KES for Kenyan Shillings)."
+        },
+        "bedrooms": {
+          "type": "number",
+          "description": "The number of bedrooms in the property."
+        },
+        "bathrooms": {
+          "type": "number",
+          "description": "The number of bathrooms in the property."
+        },
+        "propertyType": {
+          "type": "string",
+          "description": "The type of accommodation (e.g., apartment, hostel, room, house)."
+        },
+        "isAvailable": {
+          "type": "boolean",
+          "description": "Indicates if the property is currently available for booking."
+        },
+        "amenityIds": {
+          "type": "array",
+          "description": "References to Amenities available in this property. (Relationship: Property N:N Amenity)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "imageUrls": {
+          "type": "array",
+          "description": "An array of URLs pointing to images of the property.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "videoUrl": {
+          "type": "string",
+          "description": "URL to a video tour of the property.",
+          "format": "uri"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the property listing was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the property listing was last updated.",
+          "format": "date-time"
+        },
+        "isVerifiedByAdmin": {
+          "type": "boolean",
+          "description": "Indicates if the property listing has been verified by an administrator."
+        },
+        "recommendedPrice": {
+          "type": "number",
+          "description": "An AI-suggested competitive price for the property."
+        }
+      },
+      "required": [
+        "id",
+        "landlordId",
+        "title",
+        "description",
+        "address",
+        "city",
+        "neighborhood",
+        "latitude",
+        "longitude",
+        "pricePerMonth",
+        "currency",
+        "bedrooms",
+        "bathrooms",
+        "propertyType",
+        "isAvailable",
+        "imageUrls",
+        "createdAt",
+        "isVerifiedByAdmin"
+      ]
+    },
+    "Amenity": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Amenity",
+      "type": "object",
+      "description": "Represents a specific feature or service available at a property.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Amenity entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the amenity (e.g., 'Wi-Fi', 'Furnished', 'Parking')."
+        },
+        "description": {
+          "type": "string",
+          "description": "A brief description of the amenity."
+        },
+        "iconUrl": {
+          "type": "string",
+          "description": "URL to an icon representing the amenity.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Booking": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Booking",
+      "type": "object",
+      "description": "Represents a reservation made by a student for a property.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Booking entity."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the Student who made the booking. (Relationship: Student 1:N Booking)"
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Reference to the Property being booked. (Relationship: Property 1:N Booking)"
+        },
+        "landlordId": {
+          "type": "string",
+          "description": "Reference to the Landlord of the booked property. (Relationship: Landlord 1:N Booking)"
+        },
+        "agentId": {
+          "type": "string",
+          "description": "Reference to the Agent associated with the booking, if any. (Relationship: Agent 1:N Booking)"
+        },
+        "startDate": {
+          "type": "string",
+          "description": "The start date of the booking.",
+          "format": "date"
+        },
+        "endDate": {
+          "type": "string",
+          "description": "The end date of the booking.",
+          "format": "date"
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "The total amount due for this booking."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the total amount (e.g., KES)."
+        },
+        "bookingStatus": {
+          "type": "string",
+          "description": "The current status of the booking (e.g., pending, confirmed, cancelled, completed)."
+        },
+        "paymentId": {
+          "type": "string",
+          "description": "Reference to the associated Payment transaction. (Relationship: Booking 1:1 Payment)"
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the booking was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the booking was last updated.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "propertyId",
+        "landlordId",
+        "startDate",
+        "endDate",
+        "totalAmount",
+        "currency",
+        "bookingStatus",
+        "createdAt"
+      ]
+    },
+    "Payment": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Payment",
+      "type": "object",
+      "description": "Records details of a financial transaction, primarily M-Pesa payments for bookings.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Payment entity."
+        },
+        "bookingId": {
+          "type": "string",
+          "description": "Reference to the Booking associated with this payment. (Relationship: Booking 1:1 Payment)"
+        },
+        "payerId": {
+          "type": "string",
+          "description": "Reference to the User (student) who made the payment. (Relationship: User 1:N Payment)"
+        },
+        "payeeId": {
+          "type": "string",
+          "description": "Reference to the User (landlord or platform) who is the recipient of the payment. (Relationship: User 1:N Payment)"
+        },
+        "amount": {
+          "type": "number",
+          "description": "The amount of money transacted."
+        },
+        "currency": {
+          "type": "string",
+          "description": "The currency of the transaction amount (e.g., KES)."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "description": "The method used for the payment (e.g., M-Pesa, Card)."
+        },
+        "transactionId": {
+          "type": "string",
+          "description": "The unique transaction identifier provided by the payment gateway (e.g., M-Pesa transaction ID)."
+        },
+        "paymentStatus": {
+          "type": "string",
+          "description": "The current status of the payment (e.g., initiated, completed, failed, refunded)."
+        },
+        "paymentDate": {
+          "type": "string",
+          "description": "Timestamp when the payment was processed.",
+          "format": "date-time"
+        },
+        "commissionAmount": {
+          "type": "number",
+          "description": "The amount of commission taken by the platform from this payment."
+        },
+        "netAmountToLandlord": {
+          "type": "number",
+          "description": "The net amount received by the landlord after commission deduction."
+        }
+      },
+      "required": [
+        "id",
+        "bookingId",
+        "payerId",
+        "amount",
+        "currency",
+        "paymentMethod",
+        "transactionId",
+        "paymentStatus",
+        "paymentDate"
+      ]
+    },
+    "Review": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Review",
+      "type": "object",
+      "description": "Allows students to provide feedback and ratings for properties and landlords.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Review entity."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the Student who wrote the review. (Relationship: Student 1:N Review)"
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Reference to the Property being reviewed. (Relationship: Property 1:N Review)"
+        },
+        "landlordId": {
+          "type": "string",
+          "description": "Reference to the Landlord associated with the property being reviewed. (Relationship: Landlord 1:N Review)"
+        },
+        "rating": {
+          "type": "number",
+          "description": "The rating given by the student (e.g., 1 to 5 stars)."
+        },
+        "comment": {
+          "type": "string",
+          "description": "The textual comment or feedback provided by the student."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the review was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the review was last updated.",
+          "format": "date-time"
+        },
+        "isApprovedByAdmin": {
+          "type": "boolean",
+          "description": "Indicates if the review has been approved by an administrator for public display."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "propertyId",
+        "landlordId",
+        "rating",
+        "comment",
+        "createdAt"
+      ]
+    },
+    "RoommateRequest": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "RoommateRequest",
+      "type": "object",
+      "description": "Allows students to express their interest in finding a roommate.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the RoommateRequest entity."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to the Student who created the roommate request. (Relationship: Student 1:N RoommateRequest)"
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Reference to the Property the student is currently staying in or plans to book, if applicable. (Relationship: Property 1:N RoommateRequest)"
+        },
+        "preferredGender": {
+          "type": "string",
+          "description": "The preferred gender of the roommate (e.g., male, female, any)."
+        },
+        "preferredStudyHabits": {
+          "type": "string",
+          "description": "Description of preferred study habits for a roommate."
+        },
+        "preferredLifestyle": {
+          "type": "string",
+          "description": "Description of preferred lifestyle for a roommate."
+        },
+        "status": {
+          "type": "string",
+          "description": "The current status of the roommate request (e.g., open, matched, closed)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the roommate request was created.",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "description": "Timestamp when the roommate request was last updated.",
+          "format": "date-time"
+        },
+        "matchedStudentIds": {
+          "type": "array",
+          "description": "An array of User IDs who have been matched with or expressed interest in this request. (Relationship: RoommateRequest N:N Student)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "status",
+        "createdAt"
+      ]
+    },
+    "Message": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Message",
+      "type": "object",
+      "description": "Represents a message sent between users for communication within the platform (e.g., chat).",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Message entity."
+        },
+        "senderId": {
+          "type": "string",
+          "description": "Reference to the User who sent the message. (Relationship: User 1:N Message)"
+        },
+        "receiverId": {
+          "type": "string",
+          "description": "Reference to the User who is the recipient of the message. (Relationship: User 1:N Message)"
+        },
+        "bookingId": {
+          "type": "string",
+          "description": "Reference to the Booking context for this message, if applicable. (Relationship: Booking 1:N Message)"
+        },
+        "propertyId": {
+          "type": "string",
+          "description": "Reference to the Property context for this message, if applicable. (Relationship: Property 1:N Message)"
+        },
+        "content": {
+          "type": "string",
+          "description": "The actual text content of the message."
+        },
+        "sentAt": {
+          "type": "string",
+          "description": "Timestamp when the message was sent.",
+          "format": "date-time"
+        },
+        "isRead": {
+          "type": "boolean",
+          "description": "Indicates if the message has been read by the receiver."
+        }
+      },
+      "required": [
+        "id",
+        "senderId",
+        "receiverId",
+        "content",
+        "sentAt",
+        "isRead"
+      ]
+    },
+    "Invitation": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Invitation",
+      "type": "object",
+      "description": "Manages invitations sent by administrators to new landlords or agents for joining the platform.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Invitation entity."
+        },
+        "token": {
+          "type": "string",
+          "description": "A unique, single-use token embedded in the invitation link."
+        },
+        "invitedByAdminId": {
+          "type": "string",
+          "description": "Reference to the Admin who sent this invitation. (Relationship: Admin 1:N Invitation)"
+        },
+        "recipientName": {
+          "type": "string",
+          "description": "The name of the intended recipient of the invitation."
+        },
+        "recipientContact": {
+          "type": "string",
+          "description": "The contact information (email or phone number) of the recipient."
+        },
+        "recipientRole": {
+          "type": "string",
+          "description": "The role the recipient will register as (e.g., landlord, agent)."
+        },
+        "deliveryMethod": {
+          "type": "string",
+          "description": "The method used to send the invitation (e.g., email, whatsApp)."
+        },
+        "createdAt": {
+          "type": "string",
+          "description": "Timestamp when the invitation was created.",
+          "format": "date-time"
+        },
+        "expiresAt": {
+          "type": "string",
+          "description": "Timestamp when the invitation link will expire.",
+          "format": "date-time"
+        },
+        "usedAt": {
+          "type": "string",
+          "description": "Timestamp when the invitation link was successfully used.",
+          "format": "date-time"
+        },
+        "isUsed": {
+          "type": "boolean",
+          "description": "Indicates if the invitation link has already been used."
+        }
+      },
+      "required": [
+        "id",
+        "token",
+        "invitedByAdminId",
+        "recipientContact",
+        "recipientRole",
+        "deliveryMethod",
+        "createdAt",
+        "expiresAt",
+        "isUsed"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores core user profiles, accessible directly by the user ID. The 'role' field is denormalized here for quick authorization checks. Includes denormalized 'role' for authorization.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user, matching Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "users/{userId}/studentProfile",
+        "definition": {
+          "entityName": "StudentProfile",
+          "schema": {
+            "$ref": "#/backend/entities/StudentProfile"
+          },
+          "description": "Stores specific profile information for student users, directly owned by the parent user. Path-based ownership ensures security. Includes denormalized 'userId' matching the parent.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the student user, matching Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "users/{userId}/landlordProfile",
+        "definition": {
+          "entityName": "LandlordProfile",
+          "schema": {
+            "$ref": "#/backend/entities/LandlordProfile"
+          },
+          "description": "Stores specific profile information for landlord users, directly owned by the parent user. Path-based ownership ensures security. Includes denormalized 'userId' matching the parent.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the landlord user, matching Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "users/{userId}/agentProfile",
+        "definition": {
+          "entityName": "AgentProfile",
+          "schema": {
+            "$ref": "#/backend/entities/AgentProfile"
+          },
+          "description": "Stores specific profile information for agent users, directly owned by the parent user. Path-based ownership ensures security. Includes denormalized 'userId' matching the parent.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the agent user, matching Firebase Authentication UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "properties/{propertyId}",
+        "definition": {
+          "entityName": "Property",
+          "schema": {
+            "$ref": "#/backend/entities/Property"
+          },
+          "description": "Publicly discoverable property listings. Each document includes denormalized 'landlordId' and 'agentId' for authorization independence, allowing direct ownership checks without cross-collection reads.",
+          "params": [
+            {
+              "name": "propertyId",
+              "description": "The unique ID of the property listing."
+            }
+          ]
+        }
+      },
+      {
+        "path": "amenities/{amenityId}",
+        "definition": {
+          "entityName": "Amenity",
+          "schema": {
+            "$ref": "#/backend/entities/Amenity"
+          },
+          "description": "Global list of available amenities. Primarily read-only for most users, with write access restricted to administrators.",
+          "params": [
+            {
+              "name": "amenityId",
+              "description": "The unique ID of the amenity."
+            }
+          ]
+        }
+      },
+      {
+        "path": "bookings/{bookingId}",
+        "definition": {
+          "entityName": "Booking",
+          "schema": {
+            "$ref": "#/backend/entities/Booking"
+          },
+          "description": "Records all property bookings. Each booking document denormalizes 'studentId', 'landlordId', and 'agentId' to enable direct authorization checks for involved parties.",
+          "params": [
+            {
+              "name": "bookingId",
+              "description": "The unique ID of the booking."
+            }
+          ]
+        }
+      },
+      {
+        "path": "payments/{paymentId}",
+        "definition": {
+          "entityName": "Payment",
+          "schema": {
+            "$ref": "#/backend/entities/Payment"
+          },
+          "description": "Records payment transactions. Each payment document denormalizes 'payerId' (student) and 'payeeId' (landlord/platform) for direct authorization and transaction tracking.",
+          "params": [
+            {
+              "name": "paymentId",
+              "description": "The unique ID of the payment transaction."
+            }
+          ]
+        }
+      },
+      {
+        "path": "reviews/{reviewId}",
+        "definition": {
+          "entityName": "Review",
+          "schema": {
+            "$ref": "#/backend/entities/Review"
+          },
+          "description": "Stores student reviews for properties and landlords. Documents denormalize 'studentId', 'propertyId', and 'landlordId' for clear ownership and context, enabling easy authorization.",
+          "params": [
+            {
+              "name": "reviewId",
+              "description": "The unique ID of the review."
+            }
+          ]
+        }
+      },
+      {
+        "path": "roommateRequests/{requestId}",
+        "definition": {
+          "entityName": "RoommateRequest",
+          "schema": {
+            "$ref": "#/backend/entities/RoommateRequest"
+          },
+          "description": "Allows students to post roommate requests. Each request document denormalizes 'studentId' for ownership. These requests are publicly readable for matching but only modifiable by the owning student.",
+          "params": [
+            {
+              "name": "requestId",
+              "description": "The unique ID of the roommate request."
+            }
+          ]
+        }
+      },
+      {
+        "path": "messages/{messageId}",
+        "definition": {
+          "entityName": "Message",
+          "schema": {
+            "$ref": "#/backend/entities/Message"
+          },
+          "description": "Stores individual messages sent between users. Each message document denormalizes 'senderId' and 'receiverId' for direct authorization and access control. This structure supports listing messages with query filters on these IDs.",
+          "params": [
+            {
+              "name": "messageId",
+              "description": "The unique ID of the message."
+            }
+          ]
+        }
+      },
+      {
+        "path": "invitations/{invitationId}",
+        "definition": {
+          "entityName": "Invitation",
+          "schema": {
+            "$ref": "#/backend/entities/Invitation"
+          },
+          "description": "Admin-generated, single-use invitation links. Documents contain 'token', 'invitedByAdminId', 'recipientRole', 'expiresAt', and 'isUsed' for authorization independence, enabling direct validation upon use without additional reads.",
+          "params": [
+            {
+              "name": "invitationId",
+              "description": "The unique ID of the invitation, which can also be the 'token'."
+            }
+          ]
+        }
+      },
+      {
+        "path": "admin_roles/admins/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "A dedicated collection for Database Access Control (DBAC) to quickly verify if a user has administrative privileges. The document ID corresponds to the admin's 'userId'. Existence of a document signifies admin status.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique ID of the user who is an administrator, matching Firebase Authentication UID."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed with a strong emphasis on Authorization Independence, Structural Segregation, and Access Modeling, as mandated by the core design principles. This approach ensures that security rules are simple, robust, and easily debuggable, while also supporting efficient queries and data integrity.\n\n**Authorization Independence via Denormalization:**\nEach document in a collection contains all necessary authorization-related fields, eliminating the need for `get()` calls in security rules. This is crucial for atomic operations (transactions, batch writes) and overall rule simplicity. Key examples:\n\n*   **User Roles:** The `role` field is directly stored within each `users/{userId}` document. For administrator checks, an additional `/admin_roles/admins/{userId}` collection is used, where the existence of a document signifies admin status. This allows rules to check `request.auth.uid == userId` for direct ownership or `exists(/databases/$(database)/documents/admin_roles/admins/$(request.auth.uid))` for admin privileges without traversing parent documents.\n*   **Property Ownership/Management:** The `properties/{propertyId}` documents denormalize `landlordId` and `agentId`. This means that when a user tries to modify a property, rules can directly check `request.auth.uid == resource.data.landlordId` or `request.auth.uid == resource.data.agentId` without requiring `get()` calls to a parent `LandlordProfile` or `AgentProfile` document.\n*   **Bookings, Payments, Reviews, Messages:** These entities inherently involve multiple users. Each document (e.g., `bookings/{bookingId}`) stores `studentId`, `landlordId`, and `agentId`. Similarly, `payments` store `payerId` and `payeeId`, `reviews` store `studentId`, `propertyId`, `landlordId`, and `messages` store `senderId` and `receiverId`. This allows rules to authorize actions by checking if `request.auth.uid` matches any of the relevant IDs within the document itself.\n*   **Invitations:** The `invitations/{invitationId}` document contains `invitedByAdminId`, `recipientRole`, `expiresAt`, and `isUsed`. When an unauthenticated user attempts to use an invitation link, the security rule can directly evaluate these fields on the specific invitation document, ensuring it's valid, not expired, and matches the intended role without external dependencies.\n\n**QAPs (Rules are not Filters) through Structural Segregation:**\nThe design employs structural segregation to ensure that `list` operations are secure and performant without relying on client-side filtering. This means collections generally share a homogeneous security posture.\n\n*   **Publicly Accessible Data:** Collections like `/properties` and `/amenities` are designed for public read access, enabling any user to discover them. Write access is restricted to authorized roles (landlords/agents for properties, admins for amenities). This allows `list` queries on these collections without needing complex filters in rules, as all documents within them are intended to be readable.\n*   **User-Specific Data:** Data that is strictly owned by a user (e.g., `studentProfile`, `landlordProfile`, `agentProfile`) is placed as subcollections under `/users/{userId}`. This path-based ownership (`/users/{userId}/studentProfile`) inherently secures `list` operations, as a user can only query their own subcollection, and the rule `allow read: if request.auth.uid == userId;` ensures QAP compliance for listing their own data.\n*   **Collaborative/Contextual Data:** For entities like `bookings`, `payments`, `reviews`, `roommateRequests`, and `messages`, a top-level collection is used. While these require queries with filters (e.g., `where('studentId', '==', request.auth.uid)`), the individual document's security is still handled via denormalized fields. The QAP principle here is that the *rules allow queries with appropriate filters*, and the data structure supports these filters efficiently (via indexing) while ensuring that each returned document contains its own authorization context for verification. For example, a student can list their own bookings, a landlord can list their bookings, etc.\n*   **Admin-Specific Data:** The `/admin_roles/admins` collection is used for role-based access control, allowing rules to quickly verify admin status without `get()` calls into the `users` collection itself. Invitations are in a dedicated `/invitations` collection where only admins can list them, but any user can `get` a *specific* invitation by its token (ID) to attempt to use it, subject to validity checks within the invitation document itself.\n\nThis architecture prioritizes explicit ownership, direct authorization checks within documents, and clear segregation of data by its security requirements, leading to a scalable, secure, and maintainable Firestore solution."
+  }
+}
