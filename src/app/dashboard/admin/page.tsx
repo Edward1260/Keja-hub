@@ -22,9 +22,9 @@ import { ProfileSettings } from "@/components/profile/profile-settings";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { SidebarNavigationProvider, useSidebarNavigation } from "@/hooks/use-sidebar-navigation";
 // Removed dummy firebaseConfig - use proper config from @/firebase/config
-import { OverviewTab } from "@/components/dashboard/admin/overview-tab";
-import { UsersTab } from "@/components/dashboard/admin/users-tab";
-import { InvitationsTab } from "@/components/dashboard/admin/invitations-tab";
+import { OverviewTab } from "@/firebase/overview-tab";
+import { UsersTab } from "@/firebase/users-tab";
+import { InvitationsTab } from "@/firebase/invitations-tab";
 
 function AdminDashboardContent() {
   const { activeTab, setActiveTab } = useSidebarNavigation();
