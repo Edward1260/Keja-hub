@@ -142,9 +142,6 @@ function AdminDashboardContent() {
             <div className="relative max-w-md w-full hidden md:block">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
               <Input placeholder="Search users..." className="pl-12 h-12 bg-slate-50/50 border-none rounded-2xl focus-visible:ring-slate-900/20" />
-</xai:function_call >
-<xai:function_call name="edit_file">
-<parameter name="path">NairobiPad-01-main/src/app/dashboard/admin/page.tsx
             </div>
           </div>
 

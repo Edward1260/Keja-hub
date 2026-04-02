@@ -8,7 +8,7 @@ const nextConfig = {
       },
     ],
   },
-  swcMinify: true,
+
   output: 'standalone',
 };
 
